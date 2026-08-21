@@ -21,21 +21,32 @@ Usage:
         --obj_size 192 192 --blur_size 224 224 --conv_size 640 704 \\
         --methods unet flatnet mswn fista_c_u
 
+    # PhlatCam sample with pretrained weights
+    python demo_deep_learning.py \\
+        --psf samples/psf/PhlatCam_psf.png \\
+        --blur samples/OPhlatCam/blur/n01440764/n01440764_1154.png \\
+        --gt samples/OPhlatCam/gt/n01440764/n01440764_1154.png \\
+        --obj_size 192 192 --blur_size 224 224 --conv_size 640 704 \\
+        --methods unet flatnet mswn fista_c_u \\
+        --checkpoints unet=checkpoints/OPhlatCam-unet-rec-blur2gt_old.pth flatnet=checkpoints/OPhlatCam-flatnet-rec-blur2gt_old.pth mswn=checkpoints/OPhlatCam-mswn-unet-rec-blur2gt_old.pth fista_c_u=checkpoints/OPhlatCam-unet-rec-fista2gt.pth
+
     # OCIFAR100 sample (PhlatCam PSF and pretrained weights)
     python demo_deep_learning.py \\
         --psf samples/psf/PhlatCam_psf.png \\
         --blur samples/OCIFAR100/blur/test/apple/00-000.png \\
         --gt samples/OCIFAR100/gt/test/apple/00-000.png \\
-        --methods fista_c_u \\
-        --checkpoints fista_c_u=checkpoints/fista_c_u_ocifar100.pth
+        --obj_size 96 96 --blur_size 112 112 --conv_size 480 480 \\
+        --methods unet flatnet mswn fista_c_u \\
+        --checkpoints unet=checkpoints/OCIFAR100-unet-rec-blur2gt_full_old.pth flatnet=checkpoints/OCIFAR100-flatnet-rec-blur2gt_full_old.pth mswn=checkpoints/OCIFAR100-mswn-unet-rec-blur2gt_full_old.pth fista_c_u=checkpoints/OCIFAR100-unet-rec-fista2gt_full.pth
 
-    # OCIFAR100_sim sample (PhlatCam simulated PSF and pretrained weights)
+    # OCIFAR100_sim sample (PhlatCam simulated PSF). Pretrained weights for
+    # the simulated dataset are not included; the network runs with random
+    # initialization to verify the forward pass.
     python demo_deep_learning.py \\
         --psf samples/psf/PhlatCam_psf_sim.png \\
         --blur samples/OCIFAR100/blur_sim/test/apple/00-000.png \\
         --gt samples/OCIFAR100/gt/test/apple/00-000.png \\
-        --methods fista_c_u \\
-        --checkpoints fista_c_u=checkpoints/fista_c_u_ocifar100_sim.pth
+        --methods fista_c_u
 """
 
 import argparse

@@ -16,7 +16,7 @@ Usage:
     # Deep learning FISTA_C+U on PhlatCam test set
     python evaluate.py --dataset ophlatcam --ds_path /path/to/OPhlatCam \\
         --psf samples/psf/OPhlatCam_psf.png --method fista_c_u \\
-        --checkpoint checkpoints/fista_c_u_ophlatcam.pth
+        --checkpoint checkpoints/OPhlatCam-unet-rec-fista2gt.pth
 """
 
 import argparse

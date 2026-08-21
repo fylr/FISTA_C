@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # FISTA_C: High-quality Reconstruction for Miniaturized Lensless Cameras
 
 PyTorch implementation for the paper **"High-quality reconstruction method for miniaturized lensless cameras based on imaging model optimization"** (Optics Express, 2026).
@@ -173,7 +172,18 @@ OPhlatCam/
 unzip models.zip -d checkpoints/
 ```
 
-The BibTeX citation file is also included: [`oe-34-15-26909.bib`](oe-34-15-26909.bib).
+After extraction, `checkpoints/` should contain the following weights (names match the uploaded Baidu Pan archive):
+
+| Method | OCIFAR100 | PhlatCam |
+|--------|-----------|----------|
+| U-Net | `OCIFAR100-unet-rec-blur2gt_full_old.pth` | `OPhlatCam-unet-rec-blur2gt_old.pth` |
+| FlatNet-gen-C | `OCIFAR100-flatnet-rec-blur2gt_full_old.pth` | `OPhlatCam-flatnet-rec-blur2gt_old.pth` |
+| MWDN-CPSF | `OCIFAR100-mswn-unet-rec-blur2gt_full_old.pth` | `OPhlatCam-mswn-unet-rec-blur2gt_old.pth` |
+| **FISTA_C+U (proposed)** | `OCIFAR100-unet-rec-fista2gt_full.pth` | `OPhlatCam-unet-rec-fista2gt.pth` |
+
+> **Note**: Pretrained weights for OCIFAR100_sim are not included in the current release; the demo will run with random initialization on the simulated data.
+
+The BibTeX citation file is also included: [`citation.bib`](citation.bib).
 
 ---
 
@@ -303,13 +313,29 @@ python demo_deep_learning.py \
     --obj_size 192 192 --blur_size 224 224 --conv_size 640 704 \
     --methods unet flatnet mswn fista_c_u
 
-# Run only the proposed FISTA_C+U with pretrained weights
+# Run all deep learning methods with pretrained PhlatCam weights
 python demo_deep_learning.py \
     --psf samples/psf/PhlatCam_psf.png \
     --blur samples/OPhlatCam/blur/n01440764/n01440764_1154.png \
+    --gt samples/OPhlatCam/gt/n01440764/n01440764_1154.png \
     --obj_size 192 192 --blur_size 224 224 --conv_size 640 704 \
-    --methods fista_c_u \
-    --checkpoints fista_c_u=checkpoints/fista_c_u_ophlatcam.pth
+    --methods unet flatnet mswn fista_c_u \
+    --checkpoints unet=checkpoints/OPhlatCam-unet-rec-blur2gt_old.pth \
+                flatnet=checkpoints/OPhlatCam-flatnet-rec-blur2gt_old.pth \
+                mswn=checkpoints/OPhlatCam-mswn-unet-rec-blur2gt_old.pth \
+                fista_c_u=checkpoints/OPhlatCam-unet-rec-fista2gt.pth
+
+# Run all deep learning methods with pretrained OCIFAR100 weights
+python demo_deep_learning.py \
+    --psf samples/psf/PhlatCam_psf.png \
+    --blur samples/OCIFAR100/blur/test/apple/00-000.png \
+    --gt samples/OCIFAR100/gt/test/apple/00-000.png \
+    --obj_size 96 96 --blur_size 112 112 --conv_size 480 480 \
+    --methods unet flatnet mswn fista_c_u \
+    --checkpoints unet=checkpoints/OCIFAR100-unet-rec-blur2gt_full_old.pth \
+                flatnet=checkpoints/OCIFAR100-flatnet-rec-blur2gt_full_old.pth \
+                mswn=checkpoints/OCIFAR100-mswn-unet-rec-blur2gt_full_old.pth \
+                fista_c_u=checkpoints/OCIFAR100-unet-rec-fista2gt_full.pth
 ```
 
 ### Python API
@@ -340,10 +366,9 @@ model = FISTA_C_U(
     obj_size=(96, 96), blur_size=(112, 112), conv_size=(480, 480),
 )
 # Available pretrained weights (see the models link in Prepare data):
-#   checkpoints/fista_c_u_ophlatcam.pth
-#   checkpoints/fista_c_u_ocifar100.pth
-#   checkpoints/fista_c_u_ocifar100_sim.pth
-model.load_state_dict(torch.load("checkpoints/fista_c_u_ocifar100.pth")["model"])
+#   checkpoints/OCIFAR100-unet-rec-fista2gt_full.pth
+#   checkpoints/OPhlatCam-unet-rec-fista2gt.pth
+model.load_state_dict(torch.load("checkpoints/OPhlatCam-unet-rec-fista2gt.pth")["model"])
 model.eval()
 
 with torch.no_grad():
@@ -364,8 +389,15 @@ python evaluate.py --dataset ocifar100_sim --ds_path samples/OCIFAR100 \
 # Deep learning FISTA_C+U on PhlatCam sample test set
 python evaluate.py --dataset ophlatcam --ds_path samples/OPhlatCam \
     --psf samples/psf/PhlatCam_psf.png --method fista_c_u \
-    --checkpoint checkpoints/fista_c_u_ophlatcam.pth \
+    --checkpoint checkpoints/OPhlatCam-unet-rec-fista2gt.pth \
     --blur_size 224 224 --obj_size 192 192 --conv_size 640 704 \
+    --use_lpips
+
+# Deep learning FISTA_C+U on OCIFAR100 sample test set
+python evaluate.py --dataset ocifar100 --ds_path samples/OCIFAR100 \
+    --psf samples/psf/PhlatCam_psf.png --method fista_c_u \
+    --checkpoint checkpoints/OCIFAR100-unet-rec-fista2gt_full.pth \
+    --blur_size 112 112 --obj_size 96 96 --conv_size 480 480 \
     --use_lpips
 ```
 
