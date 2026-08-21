@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # FISTA_C: High-quality Reconstruction for Miniaturized Lensless Cameras
 
 PyTorch implementation for the paper **"High-quality reconstruction method for miniaturized lensless cameras based on imaging model optimization"** (Optics Express, 2026).
