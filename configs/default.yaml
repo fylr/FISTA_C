@@ -1,0 +1,77 @@
+# Default configuration for FISTA_C reconstruction
+# Geometry parameters follow the OCIFAR100 setup in the paper.
+
+# --- Imaging geometry ---
+obj_size: [96, 96]       # Effective scene region size (H, W)
+blur_size: [112, 112]    # Cropped blur image size (H, W)
+conv_size: [480, 480]    # Padded convolution domain size (H, W)
+sensor_size: null        # Full sensor image size (null = same as conv_size)
+psf_weight: 1.0          # PSF brightness scaling factor
+
+# --- Traditional algorithms ---
+wiener:
+  # Regularization lambda2 is derived from PSF spectrum automatically.
+
+fista_o:
+  lambda: 1.0e-2         # Sparse regularization weight (OCIFAR100_sim)
+  iters: 1500            # Maximum iterations
+  mu_eta: 0.75           # Backtracking step size decay
+  err_threshold: 1.0e-8  # Convergence threshold
+
+fista_c:
+  lambda: 1.0e-4         # TV regularization weight (OCIFAR100_sim, blur_size=112)
+  iters: 1500
+  mu_eta: 0.75
+  err_threshold: 1.0e-8
+
+# --- Deep learning ---
+unet:
+  in_chans: 3
+  nn_upsample: false
+  negative_slope: 0.01
+
+fista_c_u:
+  fista_lambda: 1.0e-4
+  fista_iters: 1500
+  # U-Net takes FISTA_C output as input.
+
+# --- Loss function (Eq. 7) ---
+loss:
+  mse_weight: 1.0
+  ssim_weight: 0.02      # OCIFAR100_sim / OCIFAR100
+  lpips_weight: 0.04     # OCIFAR100_sim / OCIFAR100
+  # PhlatCam: ssim_weight=0.012, lpips_weight=0.025
+
+# --- Paths ---
+paths:
+  psf_ocifar100: samples/psf/PhlatCam_psf.png      # OCIFAR100 PSF (PhlatCam, included)
+  psf_ocifar100_sim: samples/psf/PhlatCam_psf_sim.png  # OCIFAR100_sim PSF (included)
+  psf_phlatcam: samples/psf/PhlatCam_psf.png    # PhlatCam PSF (included)
+  checkpoints: checkpoints/
+  output: results/
+
+# --- Datasets ---
+datasets:
+  ocifar100:
+    root: samples/OCIFAR100    # Sample data (2 test images); replace with full dataset path
+    blur_type: blur            # 'blur' (real) or 'blur_sim' (simulated)
+    blur_size: [112, 112]
+    obj_size: [96, 96]
+    conv_size: [480, 480]
+    num_classes: 100
+
+  ocifar100_sim:
+    root: samples/OCIFAR100    # Shares the SAME root as ocifar100 (gt/ + blur_sim/)
+    blur_type: blur_sim        # load simulated blur from the shared gt root
+    blur_size: [112, 112]
+    obj_size: [96, 96]
+    conv_size: [480, 480]
+    num_classes: 100
+
+  ophlatcam:
+    root: samples/OPhlatCam    # Sample data (2 test images); replace with full dataset path
+    blur_size: [224, 224]
+    obj_size: [192, 192]
+    conv_size: [640, 704]
+    num_classes: 1000
+    train_ratio: 0.99

@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build and cache
+build/
+dist/
+*.egg-info/
+*.egg
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Data and model weights (too large for git, uploaded separately)
+checkpoints/*
+!checkpoints/.gitkeep
+*.pth
+*.pt
+*.ckpt
+
+# Full datasets (not the small samples included in the repo)
+data/
+datasets/
+
+# Generated results
+results/
+*.png
+!imgs/*.png
+!samples/**/*.png
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Conda
+*.yml
+!environment.yml
